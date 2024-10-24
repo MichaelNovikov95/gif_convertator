@@ -1,0 +1,40 @@
+:host {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  .upload {
+    &_title {
+      text-align: center;
+    }
+
+    &-container {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      width: 400px;
+    }
+
+    &-functionality {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+
+      .upload-button {
+        &:first-child {
+          margin-right: 10px;
+        }
+      }
+    }
+
+    &-input {
+      visibility: hidden;
+      height: 0;
+      width: 0;
+    }
+  }
+}

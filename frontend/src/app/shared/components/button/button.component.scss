@@ -1,0 +1,17 @@
+:host {
+  .button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 15px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    width: 150px;
+    height: 45px;
+
+    &:hover {
+      background-color: #0056b3;
+    }
+  }
+}

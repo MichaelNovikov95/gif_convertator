@@ -1,0 +1,9 @@
+<div class="upload-info">
+  <p *ngIf="fileName" class="upload-file-name">
+    <span>{{ fileName }}</span>
+  </p>
+
+  <p *ngIf="errorMessage" class="upload-error-message">
+    <span>{{ errorMessage }}</span>
+  </p>
+</div>
