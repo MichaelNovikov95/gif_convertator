@@ -8,7 +8,7 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 app.get("/", () => {
-  console.log("check");
+  console.log("checks");
 });
 app.use("/api/videos", videoRoutes);
 
