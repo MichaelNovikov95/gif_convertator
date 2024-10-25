@@ -1,10 +1,13 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { EButtonAction } from "../../../core/enums/button-action.enum";
+import { NgIf } from "@angular/common";
 
 @Component({
   selector: 'app-button',
   standalone: true,
-  imports: [],
+  imports: [
+    NgIf
+  ],
   templateUrl: './button.component.html',
   styleUrl: './button.component.scss'
 })
@@ -13,6 +16,8 @@ export class ButtonComponent {
   text: string = '';
   @Input()
   method: string = '';
+  @Input()
+  loading: boolean = false;
 
   @Output()
   onDownloadEmitter: EventEmitter<void> = new EventEmitter<void>();

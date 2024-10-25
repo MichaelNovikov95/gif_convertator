@@ -1,12 +1,11 @@
-import { Component, ElementRef, inject, Renderer2, ViewChild } from '@angular/core';
-import { takeUntil } from "rxjs";
+import { Component, ElementRef, inject, OnDestroy, Renderer2, ViewChild } from '@angular/core';
+import { Subject, takeUntil } from "rxjs";
 import { NgForOf } from "@angular/common";
 
 import { ButtonComponent } from "../../../../shared/components/button/button.component";
 import { GifContainerComponent } from "../gif-container/gif-container.component";
 import { UploadInfoComponent } from "../upload-info/upload-info.component";
 import { GifService } from "../../../../core/services/gif.service";
-import { DestroyService } from "../../../../core/services/destroy.service";
 import { IButton } from "../../../../core/interfaces/button.interface";
 import { buttonConfig } from "../../../../core/constants/button.constant";
 
@@ -17,21 +16,28 @@ import { buttonConfig } from "../../../../core/constants/button.constant";
     ButtonComponent,
     GifContainerComponent,
     NgForOf,
-    UploadInfoComponent
+    UploadInfoComponent,
   ],
   templateUrl: './home-page.component.html',
-  styleUrl: './home-page.component.scss'
+  styleUrl: './home-page.component.scss',
 })
-export class HomePageComponent {
+export class HomePageComponent implements OnDestroy {
   public gifService: GifService = inject(GifService);
-  public destroy$: DestroyService = inject(DestroyService);
   public renderer2: Renderer2 = inject(Renderer2);
   public gifUrl: string | null = null;
   public errorMessage: string = '';
   public file: File | undefined = undefined;
   public buttonMap: IButton[] = buttonConfig;
+  public loading: boolean = false;
+
+  private destroy$ = new Subject<void>();
 
   @ViewChild('fileUpload') fileUploadRef: ElementRef<HTMLInputElement>
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 
   public downloadFile(): void {
     this.renderer2.selectRootElement(this.fileUploadRef.nativeElement).click();
@@ -79,6 +85,8 @@ export class HomePageComponent {
   }
 
   public convertToGif(): void {
+    this.loading = true;
+
     if (!this.file) {
       this.errorMessage = 'Please choose a file';
       return;
@@ -105,7 +113,8 @@ export class HomePageComponent {
             URL.revokeObjectURL(url);
           });
         },
-        error: () => this.errorMessage = 'Error converting video to GIF.'
+        error: () => this.errorMessage = 'Error converting video to GIF.',
+        complete: () => this.loading = false
       });
   }
 

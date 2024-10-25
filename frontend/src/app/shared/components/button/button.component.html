@@ -1,1 +1,13 @@
-<button class="button" id="uploadButton" (click)="onClick()">{{ text }}</button>
+<button
+  class="button"
+  id="uploadButton"
+  (click)="onClick()"
+  [disabled]="loading"
+>
+  <ng-container *ngIf="loading; else buttonText">
+    <span class="spinner"></span>
+  </ng-container>
+  <ng-template #buttonText>
+    {{ text }}
+  </ng-template>
+</button>

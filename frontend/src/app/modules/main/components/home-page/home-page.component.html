@@ -15,6 +15,7 @@
       class="upload-button"
       *ngFor="let button of buttonMap; trackBy: trackButton"
       [text]="button.text"
+      [loading]="loading"
       (click)="button.method === 'downloadFile' ? downloadFile() : convertToGif()"
       (onConvertToGifEmitter)="convertToGif()"
       (onDownloadEmitter)="downloadFile()"
