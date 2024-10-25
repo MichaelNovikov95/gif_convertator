@@ -18,6 +18,13 @@ Swarm.
     - `package.json`: Dependencies and scripts for the frontend.
     - `package-lock.json`: Lock file for frontend dependencies.
     - `tsconfig.json`: TypeScript configuration for the frontend.
+ 
+- `/cypress/`: Contains the cypress tests
+    - `/cypress/`: folder with downloaded files and tests.
+    - `/cypress.config.js/`: file contains the configuration settings for Cypress tests.
+    - `package.json`: Dependencies and scripts for the cypress.
+    - `package-lock.json`: Lock file for cypress dependencies.
+    - `tsconfig.json`: TypeScript configuration for the cypress.
 
 - `Dockerfile`: Docker build instructions for the combined frontend and backend services.
 - `docker-compose.yml`: Docker Compose configuration for running the services in containers, with the ability to scale
