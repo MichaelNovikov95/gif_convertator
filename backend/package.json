@@ -4,8 +4,8 @@
   "description": "",
   "main": "src/app/server.ts",
   "scripts": {
-    "start": "npx ts-node src/app/server.ts",
-    "dev": "npx ts-node src/app/server.ts"
+    "start": "ts-node src/app/server.ts",
+    "dev": "ts-node src/app/server.ts"
   },
   "dependencies": {
     "@ffprobe-installer/ffprobe": "^2.1.2",
