@@ -7,7 +7,7 @@ Swarm.
 ## File Structure
 
 - `/backend/`: Contains the backend (Express) service
-    - `index.ts`: Main TypeScript file for the backend service.
+    - `src/`: Source folder for the Express application.
     - `package.json`: Dependencies and scripts for the backend.
     - `package-lock.json`: Lock file for backend dependencies.
     - `tsconfig.json`: TypeScript configuration for the backend.
