@@ -18,7 +18,7 @@ describe("Load Test for Video Upload", () => {
         const requestPromise = cy
           .request({
             method: "POST",
-            url: "http://localhost:3000/api/videos/convert",
+            url: "http://localhost:3000/test",
             body: formData,
             headers: {
               "Accept": "application/json",
