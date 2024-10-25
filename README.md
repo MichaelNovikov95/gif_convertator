@@ -7,24 +7,27 @@ Swarm.
 ## File Structure
 
 - `/backend/`: Contains the backend (Express) service
-    - `src/`: Source folder for the Express application.
-    - `package.json`: Dependencies and scripts for the backend.
-    - `package-lock.json`: Lock file for backend dependencies.
-    - `tsconfig.json`: TypeScript configuration for the backend.
+
+  - `src/`: Source folder for the Express application.
+  - `package.json`: Dependencies and scripts for the backend.
+  - `package-lock.json`: Lock file for backend dependencies.
+  - `tsconfig.json`: TypeScript configuration for the backend.
 
 - `/frontend/`: Contains the frontend (Angular) service
-    - `src/`: Source folder for the Angular application.
-    - `angular.json`: Configuration file for Angular CLI.
-    - `package.json`: Dependencies and scripts for the frontend.
-    - `package-lock.json`: Lock file for frontend dependencies.
-    - `tsconfig.json`: TypeScript configuration for the frontend.
- 
+
+  - `src/`: Source folder for the Angular application.
+  - `angular.json`: Configuration file for Angular CLI.
+  - `package.json`: Dependencies and scripts for the frontend.
+  - `package-lock.json`: Lock file for frontend dependencies.
+  - `tsconfig.json`: TypeScript configuration for the frontend.
+
 - `/cypress/`: Contains the cypress tests
-    - `/cypress/`: folder with downloaded files and tests.
-    - `/cypress.config.js/`: file contains the configuration settings for Cypress tests.
-    - `package.json`: Dependencies and scripts for the cypress.
-    - `package-lock.json`: Lock file for cypress dependencies.
-    - `tsconfig.json`: TypeScript configuration for the cypress.
+
+  - `/cypress/`: folder with downloaded files and tests.
+  - `/cypress.config.js/`: file contains the configuration settings for Cypress tests.
+  - `package.json`: Dependencies and scripts for the cypress.
+  - `package-lock.json`: Lock file for cypress dependencies.
+  - `tsconfig.json`: TypeScript configuration for the cypress.
 
 - `Dockerfile`: Docker build instructions for the combined frontend and backend services.
 - `docker-compose.yml`: Docker Compose configuration for running the services in containers, with the ability to scale
@@ -37,19 +40,22 @@ Swarm.
    Before running the containers, build the Docker image using the following command:
 
    ```bash
-   docker build -t gif_convertator_image .
+   docker build -t paired_app_image .
    ```
-2. **Initialize Docker Swarm
+
+2. \*\*Initialize Docker Swarm
 
    ```bash
    docker swarm init
    ```
-4. **Run the application using Docker Compose**  
+
+3. **Run the application using Docker Compose**  
    Start the containers using Docker Compose:
 
    ```bash
    docker-compose up --build
    ```
+
    This will run the Angular frontend on port 4200 and the Express backend on port 3000.
 
 ## Scaling with Docker Swarm
@@ -61,7 +67,7 @@ Docker Compose configuration.
 
 ```bash
 docker swarm init
-````
+```
 
 2. **Deploy the stack using the Docker Compose file:**
 
@@ -92,7 +98,9 @@ npm install
 cd ../frontend
 npm install
 ```
+
 After installing the dependencies, try building the Docker image again:
+
 ```bash
 docker build -t gif_convertator_image .
 ```
