@@ -1,11 +1,11 @@
 import { Request, Response } from "express";
-import { videoQueue } from "../queue";
+import { Queue } from 'bullmq';
 
-export const convertVideo = async (req: Request, res: Response) => {
+export const convertVideo = (videoQueue: Queue) => async (req: Request, res: Response) => {
   const file: Express.Multer.File | undefined = req.file;
 
   if (file) {
-    const job = await videoQueue.add({ videoPath: file.path });
+    const job = await videoQueue.add('convert', { videoPath: file.path });
 
     res.status(202).send({ jobId: job.id, message: "Video conversion started.", status: "waiting" });
   } else {
