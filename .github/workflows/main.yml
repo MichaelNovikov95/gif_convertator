@@ -13,6 +13,17 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Set up Docker
+        run: |
+          docker build -t paired_app_image .
+          docker swarm init 
+          docker-compose up --build -d 
+
+      - name: Wait for Server
+        run: |
+          npm install -g wait-on
+          wait-on http://localhost:3000 
+          wait-on http://localhost:4200 
       - name: Cypress run
         # Uses the official Cypress GitHub action https://github.com/cypress-io/github-action
         uses: cypress-io/github-action@v6
