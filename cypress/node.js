@@ -1,7 +1,7 @@
 const cypress = require("cypress");
-// const { exec } = require('child_process');
-const usersCount = 10;
-const startingNumber = 6000;
+
+const usersCount = 100;
+const startingNumber = 10;
 const usernamePrefix = "TestUser";
 
 const testMethods = [{ spec: "cypress/e2e/load-test/load-test.cy.ts" }];
@@ -34,7 +34,7 @@ async function runTests(username) {
 async function runTestsAsync() {
   for (let i = startingNumber; i < startingNumber + usersCount; i++) {
     console.log(`Running tests for user ${i}`);
-    const username = `${usernamePrefix}${i}@wso2.com`;
+    const username = `${usernamePrefix}${i}@gmail.com`;
     runTests(username);
   }
 }
