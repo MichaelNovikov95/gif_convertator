@@ -77,6 +77,21 @@ docker stack deploy -c docker-compose.yml gif_convertator_stack
 
 This will run the services in Docker Swarm, allowing you to scale the web and worker services.
 
+## Running Tests
+To run tests follow these steps:
+
+1. **Navigate to the Cypress directory:**
+
+```bash
+cd cypress
+```
+
+2. **Run the Cypress tests:**
+
+```bash
+npm run start:test
+```
+
 ## Notes
 
 - The frontend is running via ng serve and is available on port 4200. You can update the configuration to build and serve the application if needed.
