@@ -7,7 +7,6 @@ const usernamePrefix = "TestUser";
 const testMethods = [{ spec: "cypress/e2e/load-test/load-test.cy.ts" }];
 
 async function runTests(username) {
-  console.log("Username:", username);
   const results = {};
 
   for (const { name, spec } of testMethods) {
@@ -22,7 +21,6 @@ async function runTests(username) {
         exit: true,
         name: name,
       });
-      console.log(`${name} tests completed for user ${username}`);
       results[name] = testResults.totalFailed === 0 ? "Pass" : "Fail";
     } catch (error) {
       console.error(`Error running ${name} tests for user ${username}:`, error);
@@ -33,7 +31,6 @@ async function runTests(username) {
 
 async function runTestsAsync() {
   for (let i = startingNumber; i < startingNumber + usersCount; i++) {
-    console.log(`Running tests for user ${i}`);
     const username = `${usernamePrefix}${i}@gmail.com`;
     runTests(username);
   }

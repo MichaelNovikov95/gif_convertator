@@ -21,7 +21,7 @@ Swarm.
    Before running the containers, build the Docker image using the following command:
 
    ```bash
-   docker build -t paired_app_image .
+   docker build -t gif_convertor_image .
    ```
 
 2. \*\*Initialize Docker Swarm
@@ -53,7 +53,7 @@ docker swarm init
 2. **Deploy the stack using the Docker Compose file:**
 
 ```bash
-docker stack deploy -c docker-compose.yml gif_convertator_stack
+docker stack deploy -c docker-compose.yml gif_convertor_stack
 ```
 
 This will run the services in Docker Swarm, allowing you to scale the web and worker services.
@@ -98,5 +98,5 @@ npm install
 After installing the dependencies, try building the Docker image again:
 
 ```bash
-docker build -t gif_convertator_image .
+docker build -t gif_convertor_image .
 ```

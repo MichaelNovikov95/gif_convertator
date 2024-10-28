@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+
 import { convertVideoToGIF } from "../services/video.service";
 
 export const convertVideo = async (req: Request, res: Response) => {

@@ -2,35 +2,35 @@ version: "3.8"
 
 services:
   web:
-    image: paired_app_image # The Docker image for your web server, which contains both Angular (Frontend) and Express (Backend)
+    image: gif_convertor_image
     ports:
-      - "4200:4200" # Maps port 4200 on the host to port 4200 inside the container for the Angular frontend (ng serve)
-      - "3000:3000" # Maps port 3000 on the host to port 3000 inside the container for the Express backend
+      - "4200:4200"
+      - "3000:3000"
     deploy:
-      replicas: 1 # Specifies that there should be only 1 replica of the web service
+      replicas: 1
       resources:
         limits:
-          cpus: "1.0" # Limits the web service container to 1 CPU
-          memory: 2G # Limits the web service container to 2GB of RAM
+          cpus: "1.0"
+          memory: 2G
       restart_policy:
-        condition: on-failure # Specifies that the container should restart only if it fails
+        condition: on-failure
     networks:
-      - app-network # Connects the web service to the 'app-network', allowing communication with other services
+      - app-network
 
   worker:
-    image: paired_app_image # The same image as the web service, but this could be different if the worker service has its own image
+    image: gif_convertor_image
     deploy:
-      replicas: 5 # Creates 5 replicas of the worker service, allowing parallel processing
+      replicas: 5
       resources:
         limits:
-          cpus: "1.0" # Limits each worker container to 1 CPU
-          memory: 2G # Limits each worker container to 2GB of RAM
+          cpus: "1.0"
+          memory: 2G
       restart_policy:
-        condition: on-failure # Specifies that the worker container should restart only if it fails
+        condition: on-failure
     networks:
-      - app-network # Connects the worker service to the 'app-network' for communication with the web service and other workers
+      - app-network
 
 networks:
   app-network:
-    driver: overlay # The overlay driver creates a distributed network across Docker nodes, allowing containers to communicate across different hosts
-    attachable: true # Makes the network attachable, allowing containers to manually join the network if needed
+    driver: overlay
+    attachable: true
