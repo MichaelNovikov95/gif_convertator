@@ -1,0 +1,10 @@
+import Queue from 'bull';
+
+const videoQueue = new Queue('video conversion', {
+  redis: {
+    host: '127.0.0.1',
+    port: 6379,
+  },
+});
+
+export { videoQueue };

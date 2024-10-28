@@ -6,8 +6,15 @@ services:
     ports:
       - "4200:4200"
       - "3000:3000"
+    networks:
+      - app-network
+
+  worker:
+    build:
+      context: ./workers
+      dockerfile: Dockerfile
     deploy:
-      replicas: 1
+      replicas: 5
       resources:
         limits:
           cpus: "1.0"
@@ -17,16 +24,10 @@ services:
     networks:
       - app-network
 
-  worker:
-    image: gif_convertor_image
-    deploy:
-      replicas: 5
-      resources:
-        limits:
-          cpus: "1.0"
-          memory: 2G
-      restart_policy:
-        condition: on-failure
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
     networks:
       - app-network
 
