@@ -7,27 +7,8 @@ Swarm.
 ## File Structure
 
 - `/backend/`: Contains the backend (Express) service
-
-  - `src/`: Source folder for the Express application.
-  - `package.json`: Dependencies and scripts for the backend.
-  - `package-lock.json`: Lock file for backend dependencies.
-  - `tsconfig.json`: TypeScript configuration for the backend.
-
 - `/frontend/`: Contains the frontend (Angular) service
-
-  - `src/`: Source folder for the Angular application.
-  - `angular.json`: Configuration file for Angular CLI.
-  - `package.json`: Dependencies and scripts for the frontend.
-  - `package-lock.json`: Lock file for frontend dependencies.
-  - `tsconfig.json`: TypeScript configuration for the frontend.
-
 - `/cypress/`: Contains the cypress tests
-
-  - `/cypress/`: folder with downloaded files and tests.
-  - `/cypress.config.js/`: file contains the configuration settings for Cypress tests.
-  - `package.json`: Dependencies and scripts for the cypress.
-  - `package-lock.json`: Lock file for cypress dependencies.
-  - `tsconfig.json`: TypeScript configuration for the cypress.
 
 - `Dockerfile`: Docker build instructions for the combined frontend and backend services.
 - `docker-compose.yml`: Docker Compose configuration for running the services in containers, with the ability to scale
@@ -76,6 +57,21 @@ docker stack deploy -c docker-compose.yml gif_convertator_stack
 ```
 
 This will run the services in Docker Swarm, allowing you to scale the web and worker services.
+
+## Running Tests
+To run tests follow these steps:
+
+1. **Navigate to the Cypress directory:**
+
+```bash
+cd cypress
+```
+
+2. **Run the Cypress tests:**
+
+```bash
+npm run start:test
+```
 
 ## Notes
 
