@@ -13,20 +13,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name : Go to cypress folder
-        run: cd cypress
-
-      - name: Init install
-        run: npm i
-
-      - name: Install dependencies
-        run: npm ci
-        
       - name: Cypress run
         # Uses the official Cypress GitHub action https://github.com/cypress-io/github-action
         uses: cypress-io/github-action@v6
         with:
+          # Set the working directory to the location of your package.json
+          working-directory: ./cypress
           # Starts web server for E2E tests - replace with your own server invocation
           # https://docs.cypress.io/guides/continuous-integration/introduction#Boot-your-server
           start: npm start
