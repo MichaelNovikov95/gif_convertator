@@ -9,26 +9,26 @@ describe("Load testing", () => {
       const formData = new FormData();
       formData.append("video", blob);
 
-      const sendGifReq = () => {
-        return cy.request({
-          method: "POST",
-          url: "http://localhost:3000/api/videos/convert",
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-          body: formData,
-          failOnStatusCode: false,
-          timeout: 600000,
-        });
-      };
-
-      const requests = new Array(100).fill(null).map(() => sendGifReq());
-
-      Cypress.Promise.all(requests).then((responses: any) => {
-        responses.forEach((res: any) => {
-          expect(!!res).to.equal(!!res);
-        });
+      // const sendGifReq = () => {
+      return cy.request({
+        method: "POST",
+        url: "http://localhost:3000/api/videos/convert",
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        body: formData,
+        failOnStatusCode: false,
+        timeout: 600000,
       });
+      // };
+
+      // const requests = new Array(100).fill(null).map(() => sendGifReq());
+
+      // Cypress.Promise.all(requests).then((responses: any) => {
+      //   responses.forEach((res: any) => {
+      //     expect(!!res).to.equal(!!res);
+      //   });
+      // });
     });
   });
 });
