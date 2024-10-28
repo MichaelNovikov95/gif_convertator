@@ -10,8 +10,8 @@ services:
       replicas: 1 # Specifies that there should be only 1 replica of the web service
       resources:
         limits:
-          cpus: "1.0" # Limits the web service container to 1 CPU
-          memory: 2G # Limits the web service container to 2GB of RAM
+          cpus: "4.0" # Limits the web service container to 1 CPU
+          memory: 4G # Limits the web service container to 2GB of RAM
       restart_policy:
         condition: on-failure # Specifies that the container should restart only if it fails
     networks:

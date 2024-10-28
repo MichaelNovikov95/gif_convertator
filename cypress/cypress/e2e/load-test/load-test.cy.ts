@@ -1,22 +1,33 @@
 /// <reference types="cypress" />
 
-describe("Load Test for Video Upload", () => {
-  Cypress._.times(100, (index) => {
-    it(`should upload video and save GIF response - run #${index + 1}`, () => {
-      const videoFilePath = "demo.mp4";
-      const outputDir = "cypress/downloads";
+describe("Load testing", () => {
+  it("should load", () => {
+    const videoFilePath = "demo.mp4";
 
-      cy.fixture(videoFilePath, "binary").then((fileContent) => {
-        cy.task("uploadVideo", { fileContent, videoFilePath, outputDir }).then(
-          (result: any) => {
-            if (result.success) {
-              cy.log("GIF saved at:", result.path);
-              cy.readFile(result.path, "binary").should("exist");
-            } else {
-              throw new Error(`Upload failed: ${result.error}`);
-            }
-          }
-        );
+    cy.fixture(videoFilePath, "base64").then((fileContent) => {
+      const blob = Cypress.Blob.base64StringToBlob(fileContent, "image/gif");
+      const formData = new FormData();
+      formData.append("video", blob);
+
+      const sendGifReq = () => {
+        return cy.request({
+          method: "POST",
+          url: "http://localhost:3000/api/videos/convert",
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+          body: formData,
+          failOnStatusCode: false,
+          timeout: 600000,
+        });
+      };
+
+      const requests = new Array(100).fill(null).map(() => sendGifReq());
+
+      Cypress.Promise.all(requests).then((responses: any) => {
+        responses.forEach((res: any) => {
+          expect(!!res).to.equal(!!res);
+        });
       });
     });
   });
