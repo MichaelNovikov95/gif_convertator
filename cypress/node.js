@@ -1,6 +1,6 @@
 const cypress = require("cypress");
 
-const usersCount = 100;
+const usersCount = 1;
 const startingNumber = 10;
 const usernamePrefix = "TestUser";
 

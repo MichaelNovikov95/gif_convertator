@@ -11,7 +11,7 @@ describe("Load testing", () => {
 
       return cy.request({
         method: "POST",
-        url: "http://localhost:3000/api/videos/convert",
+        url: "/api/videos/convert",
         headers: {
           "Content-Type": "multipart/form-data",
         },
