@@ -1,9 +1,10 @@
 {
   "name": "cypress",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "node.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node node.js",
+    "start:test": "cypress run --record --key 90c5b836-69dc-48bd-ba0e-895f32ee58d6 --parallel"
   },
   "keywords": [],
   "author": "",
