@@ -8,13 +8,11 @@ export const convertVideo =
     if (file) {
       const job = await videoQueue.add("convert", { videoPath: file.path });
 
-      res
-        .status(202)
-        .send({
-          jobId: job.id,
-          message: "Video conversion started.",
-          status: "waiting",
-        });
+      res.status(202).send({
+        jobId: job.id,
+        message: "Video conversion started.",
+        status: "waiting",
+      });
     } else {
       res.status(400).send("No file uploaded.");
     }

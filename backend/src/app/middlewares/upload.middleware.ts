@@ -1,11 +1,12 @@
 import multer from "multer";
 import { existsSync, mkdirSync } from "fs";
+import path from "path";
 
 const storage = multer.diskStorage({
   destination: (_, __, cb) => {
-    const dir = "uploads/";
+    const dir = path.join(__dirname, "../data/files"); // Вказуємо на директорію, яка монтується в Nginx
     if (!existsSync(dir)) {
-      mkdirSync(dir);
+      mkdirSync(dir, { recursive: true }); // Створюємо директорію, якщо її немає
     }
     cb(null, dir);
   },

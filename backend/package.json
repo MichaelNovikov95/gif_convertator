@@ -5,7 +5,7 @@
   "main": "src/app/server.ts",
   "scripts": {
     "start": "ts-node src/app/server.ts",
-    "dev": "ts-node src/app/server.ts"
+    "dev": "nodemon src/app/server.ts"
   },
   "dependencies": {
     "@ffprobe-installer/ffprobe": "^2.1.2",
