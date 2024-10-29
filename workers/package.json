@@ -1,15 +1,23 @@
 {
   "name": "workers",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "main": "videoWorker.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start:worker": "ts-node videoWorker.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "description": "",
   "dependencies": {
-    "bullmq": "^5.21.2"
+    "@ffprobe-installer/ffprobe": "^2.1.2",
+    "bullmq": "^5.21.2",
+    "fluent-ffmpeg": "^2.1.3",
+    "redis": "^4.7.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.6.3"
+  },
+  "devDependencies": {
+    "@types/fluent-ffmpeg": "^2.1.27"
   }
 }

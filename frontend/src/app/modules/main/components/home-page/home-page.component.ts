@@ -30,12 +30,12 @@ export class HomePageComponent implements OnDestroy {
   public buttonMap: IButton[] = buttonConfig;
   public loading: boolean = false;
 
-  private destroy$ = new Subject<void>();
+  private destroy$: Subject<boolean> = new Subject<boolean>();
 
   @ViewChild('fileUpload') fileUploadRef: ElementRef<HTMLInputElement>
 
   ngOnDestroy(): void {
-    this.destroy$.next();
+    this.destroy$.next(true);
     this.destroy$.complete();
   }
 
@@ -93,29 +93,45 @@ export class HomePageComponent implements OnDestroy {
     }
 
     this.gifService.convertVideoToGIF(this.file)
-      .pipe(
-        takeUntil(this.destroy$)
-      )
+      .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: blob => {
-          const url = URL.createObjectURL(blob);
-          this.gifUrl = url;
-
-          const a = this.renderer2.createElement('a');
-          this.renderer2.setAttribute(a, 'href', url);
-          this.renderer2.setAttribute(a, 'download', 'output.gif');
-
-          this.renderer2.appendChild(document.body, a);
-          a.click();
-          this.renderer2.removeChild(document.body, a);
-
-          a.addEventListener('click', () => {
-            URL.revokeObjectURL(url);
-          });
+        next: response => {
+          const jobId = response.jobId;
+          localStorage.setItem('jobId', jobId);
+          this.checkJobStatus(jobId);
         },
         error: () => this.errorMessage = 'Error converting video to GIF.',
         complete: () => this.loading = false
       });
+  }
+
+  public checkJobStatus(jobId: string): void {
+    const checkStatus = () => {
+      if (!localStorage.getItem('jobId')) {
+        console.log('Job ID no longer exists. Stopping checks.');
+        return;
+      }
+
+      this.gifService.getJobStatus(jobId).subscribe({
+        next: (status) => {
+          if (status.status === 'completed') {
+            this.gifUrl = status.outputPath;
+
+            localStorage.removeItem('jobId');
+            return;
+          } else {
+            console.log('Job still processing...');
+          }
+        },
+        error: () => {
+          console.error('Error checking job status.');
+        },
+      });
+
+      setTimeout(checkStatus, 5000);
+    };
+
+    checkStatus();
   }
 
   public trackButton(_: number, button: IButton): string {

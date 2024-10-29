@@ -1,11 +1,14 @@
 FROM node:20.12.2
 
-WORKDIR /app
+WORKDIR /app/workers
 
-COPY package*.json ./
+COPY workers/package*.json ./
 
 RUN npm install
 
-COPY . .
+COPY backend ./backend
+COPY utils ./utils
 
-CMD ["ts-node", "videoWorker.ts"]
+COPY workers/. ./
+
+CMD ["npx", "ts-node", "videoWorker.ts"]

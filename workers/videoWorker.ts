@@ -1,46 +1,52 @@
-import { Worker, Job, Queue } from 'bullmq';
-import { redisConnection } from '../utils/redis';
-import { convertVideoToGIF } from "../backend/src/app/services/video.service";
+import { Worker, Job, Queue } from "bullmq";
+import { redisConnection } from "./utils/redis";
+import { convertVideoToGIF } from "./services/video.service";
 
-const videoQueue = new Queue('videoQueue', { connection: redisConnection });
+const videoQueue = new Queue("videoQueue", { connection: redisConnection });
 
-const worker = new Worker('videoQueue', async (job: Job) => {
-  const { videoPath } = job.data;
+const worker = new Worker(
+  "videoQueue",
+  async (job: Job) => {
+    const { videoPath } = job.data;
 
-  try {
-    console.log(`Processing video: ${videoPath}`);
+    try {
+      console.log(`Processing video: ${videoPath}`);
 
-    const gifPath = await convertVideoToGIF(videoPath);
+      if (!job.id) return;
 
-    await redisConnection.set(job.id, JSON.stringify({ status: 'completed', outputPath: gifPath }));
+      const gifPath = await convertVideoToGIF(videoPath);
 
-    console.log(`Video converted to GIF: ${gifPath}`);
-    return gifPath;
-  } catch (error) {
-    console.error("Error processing job:", error);
-    await redisConnection.set(job.id, JSON.stringify({ status: 'failed', error: error.message }));
-    throw error;
-  }
-});
+      await redisConnection.set(
+        job.id,
+        JSON.stringify({ status: "completed", outputPath: gifPath })
+      );
 
-worker.on('completed', (job: Job) => {
-  console.log(`Job ${job.id} completed with output: ${job.returnvalue}`);
-});
-
-worker.on('failed', (job: Job, err: Error) => {
-  console.log(`Job ${job.id} failed: ${err.message}`);
-});
+      console.log(`Video converted to GIF: ${gifPath}`);
+      return gifPath;
+    } catch (error: any) {
+      console.error("Error processing job:", error);
+      if (job.id) {
+        await redisConnection.set(
+          job.id,
+          JSON.stringify({ status: "failed", error: error.message })
+        );
+      }
+      throw error;
+    }
+  },
+  { connection: redisConnection }
+);
 
 async function restoreJobs() {
-  const jobs = await videoQueue.getJobs(['waiting', 'paused', 'failed']);
+  const jobs = await videoQueue.getJobs(["waiting", "active", "completed"]);
   for (const job of jobs) {
-    if (job.name === 'convert' && job.data.videoPath) {
+    if (job.name === "convert" && job.data.videoPath) {
       console.log(`Restoring job: ${job.id}, videoPath: ${job.data.videoPath}`);
-      await videoQueue.add('convert', { videoPath: job.data.videoPath });
+      await videoQueue.add("convert", { videoPath: job.data.videoPath });
     }
   }
 }
 
-restoreJobs().catch(err => console.error("Error restoring jobs:", err));
+restoreJobs().catch((err) => console.error("Error restoring jobs: ", err));
 
 export default worker;
