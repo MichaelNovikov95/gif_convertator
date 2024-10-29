@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import { videoRoutes } from "./routes/video.router";
 import { Queue } from "bullmq";
-import { redisConnection } from "../../../utils/redis";
+import { redisConnection } from "./utils/redis";
 import worker from "../../../workers/videoWorker";
 
 const app = express();

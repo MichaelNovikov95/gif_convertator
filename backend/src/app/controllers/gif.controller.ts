@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import fs from "fs";
-import { redisConnection } from "../../../../utils/redis";
+import { redisConnection } from "../utils/redis";
 
 export const getGif = async (req: Request, res: Response) => {
   const jobId = req.params.id;
