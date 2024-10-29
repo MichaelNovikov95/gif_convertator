@@ -20,26 +20,27 @@ export const getGif = async (req: Request, res: Response) => {
 
   try {
     const jobStatus = await redisConnection.get(jobId);
-    if (jobStatus) {
-      const { outputPath } = JSON.parse(jobStatus);
-
-      res.sendFile(outputPath, (err) => {
-        if (err) {
-          console.error("Error sending file:", err);
-          return res.status(500).send("Error sending file.");
-        }
-
-        fs.unlink(outputPath, (unlinkErr) => {
-          if (unlinkErr) {
-            console.error("Error deleting file:", unlinkErr);
-          } else {
-            console.log(`Deleted GIF file: ${outputPath}`);
-          }
-        });
-      });
-    } else {
+    if (!jobStatus) {
       res.status(404).send("Job not found.");
+      return;
     }
+
+    const { outputPath } = JSON.parse(jobStatus);
+
+    res.sendFile(outputPath, (err) => {
+      if (err) {
+        console.error("Error sending file:", err);
+        return res.status(500).send("Error sending file.");
+      }
+
+      fs.unlink(outputPath, (unlinkErr) => {
+        if (unlinkErr) {
+          console.error("Error deleting file:", unlinkErr);
+        } else {
+          console.log(`Deleted GIF file: ${outputPath}`);
+        }
+      });
+    });
   } catch (error) {
     console.error("Error retrieving job status:", error);
     res.status(500).send("Error retrieving job status.");

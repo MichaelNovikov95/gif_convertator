@@ -1,14 +1,11 @@
 import express from "express";
 import cors from "cors";
 import { videoRoutes } from "./routes/video.router";
-import { Queue } from 'bullmq';
-import { redisConnection } from "../../../utils/redis";
 import worker from "../../../workers/videoWorker";
+import videoQueue from "../../../utils/videoQueue";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-
-const videoQueue = new Queue('videoQueue', { connection: redisConnection });
 
 app.use(cors());
 app.use(express.json());
