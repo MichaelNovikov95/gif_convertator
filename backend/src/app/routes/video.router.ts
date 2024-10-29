@@ -1,7 +1,8 @@
 import { Router } from "express";
-import { convertVideo, getGif } from "../controllers/video.controller";
+import { convertVideo } from "../controllers/video.controller";
+import { getGif } from "../controllers/gif.controller";
 import { upload } from "../middlewares/upload.middleware";
-import { Queue } from 'bullmq';
+import { Queue } from "bullmq";
 
 export const videoRoutes = (videoQueue: Queue) => {
   const router = Router();

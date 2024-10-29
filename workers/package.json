@@ -1,0 +1,17 @@
+{
+  "name": "workers",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start:worker": "ts-node videoWorker.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "bullmq": "^5.21.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.6.3"
+  }
+}

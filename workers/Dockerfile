@@ -8,4 +8,4 @@ RUN npm install
 
 COPY . .
 
-CMD ["ts-node", "videoWorker.ts"]
+CMD ["npx", "ts-node", "videoWorker.ts"]

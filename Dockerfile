@@ -22,6 +22,7 @@ WORKDIR /app
 
 COPY ./frontend ./frontend/
 
+
 COPY ./supervisord.conf /etc/supervisord.conf
 
 EXPOSE 3000 4200

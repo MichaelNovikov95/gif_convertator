@@ -1,4 +1,4 @@
-import { Redis } from 'ioredis';
+import { Redis } from "../backend/node_modules/ioredis/built";
 
 const redisConnection = new Redis();
 
