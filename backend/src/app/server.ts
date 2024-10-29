@@ -1,13 +1,13 @@
 import express from "express";
 import cors from "cors";
 import { videoRoutes } from "./routes/video.router";
-import { Redis } from 'ioredis';
 import { Queue } from 'bullmq';
+import { redisConnection } from "../../../utils/redis";
+import worker from "../../../workers/videoWorker";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-const redisConnection = new Redis();
 const videoQueue = new Queue('videoQueue', { connection: redisConnection });
 
 app.use(cors());
@@ -16,6 +16,8 @@ app.get("/", () => {
   console.log("checks");
 });
 app.use("/api/videos", videoRoutes(videoQueue));
+
+worker;
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
