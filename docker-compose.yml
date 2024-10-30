@@ -11,8 +11,8 @@ services:
 
   worker:
     build:
-      context: .
-      dockerfile: workers/Dockerfile
+      context: ./workers
+      dockerfile: Dockerfile
     deploy:
       replicas: 5
       resources:

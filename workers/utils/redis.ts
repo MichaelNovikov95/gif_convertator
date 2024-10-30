@@ -1,8 +1,7 @@
-import { Redis } from "ioredis";
+import IORedis from "ioredis";
 
-const redisConnection = new Redis({
-  host: "redis",
-  port: 6379,
+const redisConnection = new IORedis({
+  maxRetriesPerRequest: null,
 });
 
 export { redisConnection };
