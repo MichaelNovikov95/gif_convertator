@@ -5,7 +5,6 @@ RUN apt-get update && apt-get install -y ffmpeg supervisor bash
 
 WORKDIR /app
 
-
 COPY ./backend/package*.json ./backend/
 WORKDIR /app/backend
 RUN npm install && npm cache clean --force
@@ -22,6 +21,12 @@ WORKDIR /app
 
 COPY ./frontend ./frontend/
 
+WORKDIR /app 
+
+RUN mkdir -p /temporary-storage && \
+    chmod 774 /temporary-storage
+
+WORKDIR /app 
 
 COPY ./supervisord.conf /etc/supervisord.conf
 
