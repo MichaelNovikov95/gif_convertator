@@ -1,5 +1,5 @@
 import { Worker, Job } from "bullmq";
-import { redisConnection } from "./utils/redis";
+import { redisConnection } from "./utils/redis.ts";
 import { convertVideoToGIF } from "./services/video.service";
 
 const worker = new Worker(
