@@ -1,19 +1,13 @@
 import { Request, Response } from "express";
 import { Queue } from "bullmq";
-import fs from "fs";
-import multer from "multer";
 
 export const convertVideo =
   (videoQueue: Queue) => async (req: Request, res: Response) => {
-    const file = req.file as any;
-    const filePath = `/temporary-storage/${Math.random()
-      .toString(16)
-      .slice(2)}.mp4`;
+    const file: Express.Multer.File | undefined = req.file;
+    console.log(file);
 
     if (file) {
-      fs.writeFileSync(filePath, file, "binary");
-
-      const job = await videoQueue.add("convert", { videoPath: filePath });
+      const job = await videoQueue.add("convert", { videoPath: file.path });
 
       res.status(202).send({
         jobId: job.id,

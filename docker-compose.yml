@@ -29,7 +29,7 @@ services:
     volumes:
       - ./shared-temp-storage:/temp-storage
     depends_on:
-      # - redis
+      - redis
       - web
     networks:
       - app-network

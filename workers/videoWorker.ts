@@ -6,6 +6,7 @@ const worker = new Worker(
   "videoQueue",
   async (job: Job) => {
     const { videoPath } = job.data;
+    console.log(job.data);
 
     try {
       console.log(`Processing video: ${videoPath}`);

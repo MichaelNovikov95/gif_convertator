@@ -1,7 +1,6 @@
-
 FROM node:20.12.2
 
-RUN apt-get update && apt-get install -y ffmpeg supervisor bash
+RUN apt-get update && apt-get install -y supervisor bash
 
 WORKDIR /app
 
@@ -21,12 +20,8 @@ WORKDIR /app
 
 COPY ./frontend ./frontend/
 
-WORKDIR /app 
-
-RUN mkdir -p /temporary-storage && \
-    chmod 774 /temporary-storage
-
-WORKDIR /app 
+RUN mkdir -p /app/temporary-storage && \
+    chmod 774 /app/temporary-storage
 
 COPY ./supervisord.conf /etc/supervisord.conf
 
