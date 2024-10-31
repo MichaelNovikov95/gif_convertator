@@ -3,13 +3,16 @@ import fs from "fs";
 import { Queue } from "bullmq";
 
 export const getGif = (videoQueue: Queue) => {
-  return async (req: Request, res: Response): Promise<any> => {
+  return async (req: Request, res: Response): Promise<void> => {
     const jobId = req.params.id;
 
     try {
       const job = await videoQueue.getJob(jobId);
 
-      if (!job) return res.status(404).send("Job not found.");
+      if (!job) {
+        res.status(404).send("Job not found.");
+        return;
+      }
 
       const outputPath = job.data.videoPath;
       const gifBuffer = fs.readFileSync(outputPath);
