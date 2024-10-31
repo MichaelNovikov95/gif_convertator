@@ -1,13 +1,20 @@
-import { Component, ElementRef, inject, OnDestroy, Renderer2, ViewChild } from '@angular/core';
-import { Subject, takeUntil } from "rxjs";
-import { NgForOf } from "@angular/common";
+import {
+  Component,
+  ElementRef,
+  inject,
+  OnDestroy,
+  Renderer2,
+  ViewChild,
+} from '@angular/core';
+import { Subject, takeUntil } from 'rxjs';
+import { NgForOf } from '@angular/common';
 
-import { ButtonComponent } from "../../../../shared/components/button/button.component";
-import { GifContainerComponent } from "../gif-container/gif-container.component";
-import { UploadInfoComponent } from "../upload-info/upload-info.component";
-import { GifService } from "../../../../core/services/gif.service";
-import { IButton } from "../../../../core/interfaces/button.interface";
-import { buttonConfig } from "../../../../core/constants/button.constant";
+import { ButtonComponent } from '../../../../shared/components/button/button.component';
+import { GifContainerComponent } from '../gif-container/gif-container.component';
+import { UploadInfoComponent } from '../upload-info/upload-info.component';
+import { GifService } from '../../../../core/services/gif.service';
+import { IButton } from '../../../../core/interfaces/button.interface';
+import { buttonConfig } from '../../../../core/constants/button.constant';
 
 @Component({
   selector: 'app-home-page',
@@ -30,12 +37,12 @@ export class HomePageComponent implements OnDestroy {
   public buttonMap: IButton[] = buttonConfig;
   public loading: boolean = false;
 
-  private destroy$ = new Subject<void>();
+  private destroy$: Subject<boolean> = new Subject<boolean>();
 
-  @ViewChild('fileUpload') fileUploadRef: ElementRef<HTMLInputElement>
+  @ViewChild('fileUpload') fileUploadRef: ElementRef<HTMLInputElement>;
 
   ngOnDestroy(): void {
-    this.destroy$.next();
+    this.destroy$.next(true);
     this.destroy$.complete();
   }
 
@@ -44,7 +51,8 @@ export class HomePageComponent implements OnDestroy {
   }
 
   public onFileSelected(event: Event) {
-    const file: File | undefined = (event.target as HTMLInputElement).files?.[0];
+    const file: File | undefined = (event.target as HTMLInputElement)
+      .files?.[0];
 
     if (!file) return;
 
@@ -64,13 +72,21 @@ export class HomePageComponent implements OnDestroy {
       const videoDuration = videoElement.duration;
 
       if (videoWidth > 1024 || videoHeight > 768) {
-        this.renderer2.setProperty(this.fileUploadRef.nativeElement, 'value', '');
+        this.renderer2.setProperty(
+          this.fileUploadRef.nativeElement,
+          'value',
+          ''
+        );
         this.errorMessage = 'Video dimensions exceed 1024x768.';
         return;
       }
 
       if (videoDuration > 10) {
-        this.renderer2.setProperty(this.fileUploadRef.nativeElement, 'value', '');
+        this.renderer2.setProperty(
+          this.fileUploadRef.nativeElement,
+          'value',
+          ''
+        );
         this.errorMessage = 'Video duration exceeds 10 seconds.';
         return;
       }
@@ -92,30 +108,47 @@ export class HomePageComponent implements OnDestroy {
       return;
     }
 
-    this.gifService.convertVideoToGIF(this.file)
-      .pipe(
-        takeUntil(this.destroy$)
-      )
+    this.gifService
+      .convertVideoToGIF(this.file)
+      .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: blob => {
-          const url = URL.createObjectURL(blob);
-          this.gifUrl = url;
-
-          const a = this.renderer2.createElement('a');
-          this.renderer2.setAttribute(a, 'href', url);
-          this.renderer2.setAttribute(a, 'download', 'output.gif');
-
-          this.renderer2.appendChild(document.body, a);
-          a.click();
-          this.renderer2.removeChild(document.body, a);
-
-          a.addEventListener('click', () => {
-            URL.revokeObjectURL(url);
-          });
+        next: (response) => {
+          const jobId = response.jobId;
+          localStorage.setItem('jobId', jobId);
+          this.checkJobStatus(jobId);
         },
-        error: () => this.errorMessage = 'Error converting video to GIF.',
-        complete: () => this.loading = false
+        error: () => (this.errorMessage = 'Error converting video to GIF.'),
+        complete: () => (this.loading = false),
       });
+  }
+
+  public checkJobStatus(jobId: string): void {
+    const checkStatus = () => {
+      if (!localStorage.getItem('jobId')) {
+        console.log('Job ID no longer exists. Stopping checks.');
+        return;
+      }
+
+      this.gifService.getJobStatus(jobId).subscribe({
+        next: (status) => {
+          if (status.status === 'completed') {
+            this.gifUrl = status.outputPath;
+
+            localStorage.removeItem('jobId');
+            return;
+          } else {
+            console.log('Job still processing...');
+          }
+        },
+        error: () => {
+          console.error('Error checking job status.');
+        },
+      });
+
+      setTimeout(checkStatus, 5000);
+    };
+
+    checkStatus();
   }
 
   public trackButton(_: number, button: IButton): string {

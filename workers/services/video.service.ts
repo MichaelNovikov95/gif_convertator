@@ -6,7 +6,10 @@ ffmpeg.setFfprobePath(ffprobePath);
 
 export const convertVideoToGIF = (videoPath: string): Promise<string> => {
   return new Promise((resolve, reject) => {
-    const gifPath = join("/temp-storage", `output-${Date.now()}.gif`);
+    const gifPath = join(
+      "/temp-storage",
+      `output-${Math.random().toString(16).slice(2)}.gif`
+    );
 
     ffmpeg(videoPath)
       .output(gifPath)

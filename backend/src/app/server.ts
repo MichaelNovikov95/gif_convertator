@@ -8,7 +8,6 @@ import { redisConnection } from "./utils/redis";
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// redisDemo();
 const videoQueue = new Queue("videoQueue", { connection: redisConnection });
 
 app.use(cors());
