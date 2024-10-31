@@ -1,10 +1,9 @@
-import multer from "multer";
-
+import multer, { Multer, StorageEngine } from "multer";
 import path from "path";
 
-const storage = multer.diskStorage({
+const storage: StorageEngine = multer.diskStorage({
   destination: (_, __, cb) => {
-    const dir = path.join("/temp-storage");
+    const dir: string = path.join("/temp-storage");
     cb(null, dir);
   },
   filename: (_, __, cb) => {
@@ -12,4 +11,4 @@ const storage = multer.diskStorage({
   },
 });
 
-export const upload = multer({ storage: storage });
+export const upload: Multer = multer({ storage: storage });

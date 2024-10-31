@@ -2,7 +2,6 @@ import { Router } from "express";
 import { Queue } from "bullmq";
 
 import { upload } from "../middlewares/upload.middleware";
-
 import { convertVideo } from "../controllers/video.controller";
 import { getGif } from "../controllers/gif.controller";
 import { getJobStatus } from "../controllers/get-job-status.controller";

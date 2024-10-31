@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { NgIf } from '@angular/common';
+
 import { IGif } from '../../../../core/interfaces/gif.interface';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
 

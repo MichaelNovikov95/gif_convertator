@@ -35,5 +35,3 @@ const worker = new Worker(
   },
   { connection: redisConnection }
 );
-
-export default worker;

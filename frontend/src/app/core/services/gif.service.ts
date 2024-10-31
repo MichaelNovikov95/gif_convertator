@@ -11,25 +11,23 @@ import { IGif } from '../interfaces/gif.interface';
   providedIn: 'root',
 })
 export class GifService {
-  private baseUrl: string = environment.BASE_URL;
   private http: HttpClient = inject(HttpClient);
+  private baseUrl: string = environment.BASE_URL;
 
-  constructor() {}
-
-  convertVideoToGIF(file: File): Observable<ConvertResponse> {
+  public convertVideoToGIF(file: File): Observable<ConvertResponse> {
     const formData = new FormData();
     formData.append('video', file, file.name);
 
     return this.http.post<ConvertResponse>(`${this.baseUrl}/convert`, formData);
   }
 
-  getJobStatus(jobId: string): Observable<IJobStatusResponse> {
+  public getJobStatus(jobId: string): Observable<IJobStatusResponse> {
     return this.http.get<IJobStatusResponse>(
       `${this.baseUrl}/job-status/${jobId}`
     );
   }
 
-  getGif(jobId: string): Observable<IGif> {
+  public getGif(jobId: string): Observable<IGif> {
     return this.http.get<IGif>(`${this.baseUrl}/gif/${jobId}`);
   }
 }

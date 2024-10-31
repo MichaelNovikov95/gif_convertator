@@ -1,5 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { EButtonAction } from "../../../core/enums/button-action.enum";
+import { Component, Input } from '@angular/core';
 import { NgIf } from "@angular/common";
 
 @Component({
@@ -18,20 +17,4 @@ export class ButtonComponent {
   method: string = '';
   @Input()
   loading: boolean = false;
-
-  @Output()
-  onDownloadEmitter: EventEmitter<void> = new EventEmitter<void>();
-
-  @Output()
-  onConvertToGifEmitter: EventEmitter<void> = new EventEmitter<void>();
-
-  public onClick(): void {
-    if (this.method === EButtonAction.CONVERT) {
-      this.onConvertToGifEmitter.emit();
-    }
-
-    if (this.method === EButtonAction.DOWNLOAD) {
-      this.onDownloadEmitter.emit();
-    }
-  }
 }

@@ -7,9 +7,9 @@
     />
     <p *ngIf="!gif">Here would be your GIF...</p>
   </div>
+
   <app-button
     [class.button-wrapper]="!gif"
-    *ngIf="gif"
     [text]="'Download'"
     (click)="onDownloadGif()"
   />

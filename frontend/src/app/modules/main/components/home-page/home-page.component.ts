@@ -6,7 +6,7 @@ import {
   Renderer2,
   ViewChild,
 } from '@angular/core';
-import { finalize, Observable, Subject, takeUntil, tap } from 'rxjs';
+import { finalize, Observable, Subject, takeUntil } from 'rxjs';
 import { NgForOf, AsyncPipe } from '@angular/common';
 
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
@@ -52,7 +52,7 @@ export class HomePageComponent implements OnDestroy {
     this.renderer2.selectRootElement(this.fileUploadRef.nativeElement).click();
   }
 
-  public onFileSelected(event: Event) {
+  public onFileSelected(event: Event): void {
     const file: File | undefined = (event.target as HTMLInputElement)
       .files?.[0];
 
@@ -138,7 +138,6 @@ export class HomePageComponent implements OnDestroy {
         next: async (status) => {
           if (status.status === 'completed') {
             this.gif$ = this.gifService.getGif(jobId);
-            this.gif$.pipe(tap((data) => console.log(data)));
             localStorage.removeItem('jobId');
             return;
           } else {
@@ -160,9 +159,9 @@ export class HomePageComponent implements OnDestroy {
     return button.text;
   }
 
-  public downloadGif(gifUrl: string) {
-    const blob = this.base64ToBlob(gifUrl, 'image/gif');
-    const url = URL.createObjectURL(blob);
+  public downloadGif(gifUrl: string): void {
+    const blob: Blob = this.base64ToBlob(gifUrl, 'image/gif');
+    const url: string = URL.createObjectURL(blob);
 
     const a = this.renderer2.createElement('a');
     this.renderer2.setAttribute(a, 'href', url);
@@ -177,14 +176,19 @@ export class HomePageComponent implements OnDestroy {
     URL.revokeObjectURL(url);
   }
 
-  base64ToBlob(base64: string, type: string): Blob {
-    const byteCharacters = atob(base64);
+  public base64ToBlob(base64: string, type: string): Blob {
+    const byteCharacters: string = atob(base64);
     const byteArray = new Uint8Array(byteCharacters.length);
 
-    for (let i = 0; i < byteCharacters.length; i++) {
+    for (let i: number = 0; i < byteCharacters.length; i++) {
       byteArray[i] = byteCharacters.charCodeAt(i);
     }
 
     return new Blob([byteArray], { type });
+  }
+
+  public removeFile(): void {
+    this.file = undefined;
+    this.renderer2.setProperty(this.fileUploadRef.nativeElement, 'value', '');
   }
 }

@@ -19,12 +19,14 @@
       (click)="
         button.method === 'downloadFile' ? downloadFile() : convertToGif()
       "
-      (onConvertToGifEmitter)="convertToGif()"
-      (onDownloadEmitter)="downloadFile()"
     />
   </div>
 
-  <app-upload-info [fileName]="file?.name" [errorMessage]="errorMessage" />
+  <app-upload-info
+    [fileName]="file?.name"
+    [errorMessage]="errorMessage"
+    (removeFileEmitter)="removeFile()"
+  />
 
   <app-gif-container
     [gif]="gif$ | async"

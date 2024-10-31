@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { NgIf } from "@angular/common";
 
 @Component({
@@ -13,7 +13,13 @@ import { NgIf } from "@angular/common";
 export class UploadInfoComponent {
   @Input()
   fileName: string | undefined = undefined;
-
   @Input()
   errorMessage: string = '';
+
+  @Output()
+  removeFileEmitter: EventEmitter<void> = new EventEmitter<void>();
+
+  public removeFile(): void {
+    this.removeFileEmitter.emit();
+  }
 }
