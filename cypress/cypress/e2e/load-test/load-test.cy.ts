@@ -1,10 +1,10 @@
 /// <reference types="cypress" />
 
 describe("Load testing", () => {
-  it("should load 100 times", () => {
+  it("should load 100 times and delete each GIF", () => {
     const videoFilePath = "demo.mp4";
     const numberOfRepetitions = 100;
-    const requests = [];
+    const requests: Cypress.Chainable[] = [];
 
     for (let i = 0; i < numberOfRepetitions; i++) {
       requests.push(
@@ -31,7 +31,7 @@ describe("Load testing", () => {
     }
 
     Cypress.Promise.all(requests).then((responses) => {
-      console.log("All requests completed:", responses);
+      cy.log("All requests completed.");
     });
   });
 });
