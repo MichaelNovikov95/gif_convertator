@@ -1,30 +1,29 @@
-import { redisConnection } from "../utils/redis";
+import { Queue } from "bullmq";
 import { Request, Response } from "express";
 
-export const getJobStatus = async (req: Request, res: Response) => {
-  const jobId = req.params.id;
+export const getJobStatus = (videoQueue: Queue) => {
+  return async (req: Request, res: Response): Promise<void> => {
+    const jobId = req.params.id;
 
-  try {
-    const jobStatus = await redisConnection.get(jobId);
-    if (!jobStatus) {
-      return res.status(404).send("Job not found.");
-    }
-
-    let parsedStatus;
     try {
-      parsedStatus = JSON.parse(jobStatus);
-    } catch (parseError) {
-      console.error("Error parsing job status:", parseError);
-      return res.status(500).send("Error retrieving job status.");
-    }
+      const job = await videoQueue.getJob(jobId);
 
-    res.send({
-      id: jobId,
-      status: parsedStatus.status,
-      outputPath: parsedStatus.outputPath,
-    });
-  } catch (error) {
-    console.error("Error retrieving job status:", error);
-    res.status(500).send("Error retrieving job status.");
-  }
+      if (!job) {
+        res.status(404).send("Job not found.");
+        return;
+      }
+
+      const status = await job.getState();
+      const outputPath = job.data;
+
+      res.send({
+        id: jobId,
+        status,
+        outputPath,
+      });
+    } catch (error) {
+      console.error("Error retrieving job details:", error);
+      res.status(500).send("Error retrieving job details.");
+    }
+  };
 };

@@ -6,8 +6,8 @@ import {
   Renderer2,
   ViewChild,
 } from '@angular/core';
-import { Subject, takeUntil } from 'rxjs';
-import { NgForOf } from '@angular/common';
+import { Observable, Subject, takeUntil, tap } from 'rxjs';
+import { NgForOf, AsyncPipe } from '@angular/common';
 
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
 import { GifContainerComponent } from '../gif-container/gif-container.component';
@@ -15,6 +15,7 @@ import { UploadInfoComponent } from '../upload-info/upload-info.component';
 import { GifService } from '../../../../core/services/gif.service';
 import { IButton } from '../../../../core/interfaces/button.interface';
 import { buttonConfig } from '../../../../core/constants/button.constant';
+import { IGif } from '../../../../core/interfaces/gif.interface';
 
 @Component({
   selector: 'app-home-page',
@@ -24,6 +25,7 @@ import { buttonConfig } from '../../../../core/constants/button.constant';
     GifContainerComponent,
     NgForOf,
     UploadInfoComponent,
+    AsyncPipe,
   ],
   templateUrl: './home-page.component.html',
   styleUrl: './home-page.component.scss',
@@ -31,7 +33,7 @@ import { buttonConfig } from '../../../../core/constants/button.constant';
 export class HomePageComponent implements OnDestroy {
   public gifService: GifService = inject(GifService);
   public renderer2: Renderer2 = inject(Renderer2);
-  public gifUrl: string | null = null;
+  public gif$: Observable<IGif> = new Observable<IGif>();
   public errorMessage: string = '';
   public file: File | undefined = undefined;
   public buttonMap: IButton[] = buttonConfig;
@@ -130,10 +132,10 @@ export class HomePageComponent implements OnDestroy {
       }
 
       this.gifService.getJobStatus(jobId).subscribe({
-        next: (status) => {
+        next: async (status) => {
           if (status.status === 'completed') {
-            this.gifUrl = status.outputPath;
-
+            this.gif$ = this.gifService.getGif(jobId);
+            this.gif$.pipe(tap((data) => console.log(data)));
             localStorage.removeItem('jobId');
             return;
           } else {
