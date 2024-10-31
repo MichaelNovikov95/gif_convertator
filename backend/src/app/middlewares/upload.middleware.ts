@@ -1,16 +1,14 @@
 import multer from "multer";
-import { existsSync, mkdirSync } from "fs";
+
+import path from "path";
 
 const storage = multer.diskStorage({
   destination: (_, __, cb) => {
-    const dir = "uploads/";
-    if (!existsSync(dir)) {
-      mkdirSync(dir);
-    }
+    const dir = path.join("/temp-storage");
     cb(null, dir);
   },
-  filename: (_, file, cb) => {
-    cb(null, `${Date.now()}-${file.originalname}`);
+  filename: (_, __, cb) => {
+    cb(null, `${Math.random().toString(16).slice(2)}.mp4`);
   },
 });
 

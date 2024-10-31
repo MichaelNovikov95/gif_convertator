@@ -1,10 +1,18 @@
 import { Router } from "express";
+import { Queue } from "bullmq";
 
-import { convertVideo } from "../controllers/video.controller";
 import { upload } from "../middlewares/upload.middleware";
 
-const router = Router();
+import { convertVideo } from "../controllers/video.controller";
+import { getGif } from "../controllers/gif.controller";
+import { getJobStatus } from "../controllers/get-job-status.controller";
 
-router.post("/convert", upload.single("video"), convertVideo);
+export const videoRoutes = (videoQueue: Queue) => {
+  const router = Router();
 
-export const videoRoutes = router;
+  router.post("/convert", upload.single("video"), convertVideo(videoQueue));
+  router.get("/gif/:id", getGif);
+  router.get("/job-status/:id", getJobStatus);
+
+  return router;
+};

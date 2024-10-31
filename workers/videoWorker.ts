@@ -1,36 +1,40 @@
-import { videoQueue } from '../backend/src/queue';
-import { convertVideoToGIF } from '../backend/src/services/video.service';
-import fs from 'fs';
-import path from 'path';
+import { Worker, Job } from "bullmq";
+import { redisConnection } from "./utils/redis.ts";
+import { convertVideoToGIF } from "./services/video.service";
 
-videoQueue.process(async (job) => {
-  const { videoPath } = job.data;
+const worker = new Worker(
+  "videoQueue",
+  async (job: Job) => {
+    const { videoPath } = job.data;
+    console.log(job.data);
 
-  try {
-    console.log(`Processing video: ${videoPath}`);
+    try {
+      console.log(`Processing video: ${videoPath}`);
 
-    const gifPath = await convertVideoToGIF(videoPath);
+      if (!job.id) return;
 
-    const outputDir = path.join(__dirname, 'output');
-    if (!fs.existsSync(outputDir)) {
-      fs.mkdirSync(outputDir);
+      const gifPath = await convertVideoToGIF(videoPath);
+
+      await redisConnection.set(
+        job.id,
+        JSON.stringify({ status: "completed", outputPath: gifPath })
+      );
+
+      return gifPath;
+    } catch (error: any) {
+      console.error("Error processing job:", error);
+
+      if (!job.id) return;
+
+      await redisConnection.set(
+        job.id,
+        JSON.stringify({ status: "failed", error: error.message })
+      );
+
+      throw error;
     }
+  },
+  { connection: redisConnection }
+);
 
-    const outputPath = path.join(outputDir, path.basename(gifPath));
-    fs.renameSync(gifPath, outputPath);
-
-    console.log(`Video processed: ${outputPath}`);
-    return outputPath;
-  } catch (error) {
-    console.error("Error processing job:", error);
-    throw error;
-  }
-});
-
-videoQueue.on('completed', (job) => {
-  console.log(`Job ${job.id} completed!`);
-});
-
-videoQueue.on('failed', (job, err) => {
-  console.log(`Job ${job.id} failed: ${err.message}`);
-});
+export default worker;
