@@ -26,5 +26,8 @@
 
   <app-upload-info [fileName]="file?.name" [errorMessage]="errorMessage" />
 
-  <app-gif-container [gif]="gif$ | async" />
+  <app-gif-container
+    [gif]="gif$ | async"
+    (downloadGifEmitter)="downloadGif($event)"
+  />
 </div>

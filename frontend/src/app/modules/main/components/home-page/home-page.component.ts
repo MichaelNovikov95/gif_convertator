@@ -6,7 +6,7 @@ import {
   Renderer2,
   ViewChild,
 } from '@angular/core';
-import { Observable, Subject, takeUntil, tap } from 'rxjs';
+import { finalize, Observable, Subject, takeUntil, tap } from 'rxjs';
 import { NgForOf, AsyncPipe } from '@angular/common';
 
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
@@ -107,12 +107,16 @@ export class HomePageComponent implements OnDestroy {
 
     if (!this.file) {
       this.errorMessage = 'Please choose a file';
+      this.loading = false;
       return;
     }
 
     this.gifService
       .convertVideoToGIF(this.file)
-      .pipe(takeUntil(this.destroy$))
+      .pipe(
+        finalize(() => (this.loading = false)),
+        takeUntil(this.destroy$)
+      )
       .subscribe({
         next: (response) => {
           const jobId = response.jobId;
@@ -120,7 +124,6 @@ export class HomePageComponent implements OnDestroy {
           this.checkJobStatus(jobId);
         },
         error: () => (this.errorMessage = 'Error converting video to GIF.'),
-        complete: () => (this.loading = false),
       });
   }
 
@@ -155,5 +158,33 @@ export class HomePageComponent implements OnDestroy {
 
   public trackButton(_: number, button: IButton): string {
     return button.text;
+  }
+
+  public downloadGif(gifUrl: string) {
+    const blob = this.base64ToBlob(gifUrl, 'image/gif');
+    const url = URL.createObjectURL(blob);
+
+    const a = this.renderer2.createElement('a');
+    this.renderer2.setAttribute(a, 'href', url);
+    this.renderer2.setAttribute(a, 'download', 'downloaded.gif');
+
+    this.renderer2.appendChild(document.body, a);
+
+    a.click();
+
+    this.renderer2.removeChild(document.body, a);
+
+    URL.revokeObjectURL(url);
+  }
+
+  base64ToBlob(base64: string, type: string): Blob {
+    const byteCharacters = atob(base64);
+    const byteArray = new Uint8Array(byteCharacters.length);
+
+    for (let i = 0; i < byteCharacters.length; i++) {
+      byteArray[i] = byteCharacters.charCodeAt(i);
+    }
+
+    return new Blob([byteArray], { type });
   }
 }
