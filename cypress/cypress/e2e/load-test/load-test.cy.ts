@@ -31,7 +31,7 @@ describe("Load testing", () => {
     }
 
     Cypress.Promise.all(requests).then((responses) => {
-      cy.log("All requests completed.");
+      console.log("All requests are completed successfully.");
     });
   });
 });
