@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment.dev';
 import { IJobStatusResponse } from '../interfaces/job-status-response.interface';
 import { ConvertResponse } from '../interfaces/convert-response.interface';
+import { IGif } from '../interfaces/gif.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -26,5 +27,9 @@ export class GifService {
     return this.http.get<IJobStatusResponse>(
       `${this.baseUrl}/job-status/${jobId}`
     );
+  }
+
+  getGif(jobId: string): Observable<IGif> {
+    return this.http.get<IGif>(`${this.baseUrl}/gif/${jobId}`);
   }
 }

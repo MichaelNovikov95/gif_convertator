@@ -6,7 +6,6 @@ const worker = new Worker(
   "videoQueue",
   async (job: Job) => {
     const { videoPath } = job.data;
-    console.log(job.data);
 
     try {
       console.log(`Processing video: ${videoPath}`);
@@ -20,7 +19,7 @@ const worker = new Worker(
         JSON.stringify({ status: "completed", outputPath: gifPath })
       );
 
-      return gifPath;
+      await job.updateData({ videoPath: gifPath });
     } catch (error: any) {
       console.error("Error processing job:", error);
 
