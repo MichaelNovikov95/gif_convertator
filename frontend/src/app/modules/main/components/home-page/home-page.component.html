@@ -8,7 +8,7 @@
     id="fileInput"
     accept="video/mp4"
     (change)="onFileSelected($event)"
-  >
+  />
 
   <div class="upload-functionality">
     <app-button
@@ -16,13 +16,20 @@
       *ngFor="let button of buttonMap; trackBy: trackButton"
       [text]="button.text"
       [loading]="loading"
-      (click)="button.method === 'downloadFile' ? downloadFile() : convertToGif()"
-      (onConvertToGifEmitter)="convertToGif()"
-      (onDownloadEmitter)="downloadFile()"
+      (click)="
+        button.method === 'downloadFile' ? downloadFile() : convertToGif()
+      "
     />
   </div>
 
-  <app-upload-info [fileName]="file?.name" [errorMessage]="errorMessage" />
+  <app-upload-info
+    [fileName]="file?.name"
+    [errorMessage]="errorMessage"
+    (removeFileEmitter)="removeFile()"
+  />
 
-  <app-gif-container [gifUrl]="gifUrl" />
+  <app-gif-container
+    [gif]="gif$ | async"
+    (downloadGifEmitter)="downloadGif($event)"
+  />
 </div>

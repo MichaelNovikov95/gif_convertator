@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "node.js",
   "scripts": {
-    "start:test": "node node.js"
+    "start:test": "npx cypress run --spec 'cypress/e2e/load-test/load-test.cy.ts' "
   },
   "keywords": [],
   "author": "",

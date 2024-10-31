@@ -1,13 +1,21 @@
-import { Component, ElementRef, inject, OnDestroy, Renderer2, ViewChild } from '@angular/core';
-import { Subject, takeUntil } from "rxjs";
-import { NgForOf } from "@angular/common";
+import {
+  Component,
+  ElementRef,
+  inject,
+  OnDestroy,
+  Renderer2,
+  ViewChild,
+} from '@angular/core';
+import { finalize, Observable, Subject, takeUntil } from 'rxjs';
+import { NgForOf, AsyncPipe } from '@angular/common';
 
-import { ButtonComponent } from "../../../../shared/components/button/button.component";
-import { GifContainerComponent } from "../gif-container/gif-container.component";
-import { UploadInfoComponent } from "../upload-info/upload-info.component";
-import { GifService } from "../../../../core/services/gif.service";
-import { IButton } from "../../../../core/interfaces/button.interface";
-import { buttonConfig } from "../../../../core/constants/button.constant";
+import { ButtonComponent } from '../../../../shared/components/button/button.component';
+import { GifContainerComponent } from '../gif-container/gif-container.component';
+import { UploadInfoComponent } from '../upload-info/upload-info.component';
+import { GifService } from '../../../../core/services/gif.service';
+import { IButton } from '../../../../core/interfaces/button.interface';
+import { buttonConfig } from '../../../../core/constants/button.constant';
+import { IGif } from '../../../../core/interfaces/gif.interface';
 
 @Component({
   selector: 'app-home-page',
@@ -17,6 +25,7 @@ import { buttonConfig } from "../../../../core/constants/button.constant";
     GifContainerComponent,
     NgForOf,
     UploadInfoComponent,
+    AsyncPipe,
   ],
   templateUrl: './home-page.component.html',
   styleUrl: './home-page.component.scss',
@@ -24,7 +33,7 @@ import { buttonConfig } from "../../../../core/constants/button.constant";
 export class HomePageComponent implements OnDestroy {
   public gifService: GifService = inject(GifService);
   public renderer2: Renderer2 = inject(Renderer2);
-  public gifUrl: string | null = null;
+  public gif$: Observable<IGif> = new Observable<IGif>();
   public errorMessage: string = '';
   public file: File | undefined = undefined;
   public buttonMap: IButton[] = buttonConfig;
@@ -32,7 +41,7 @@ export class HomePageComponent implements OnDestroy {
 
   private destroy$: Subject<boolean> = new Subject<boolean>();
 
-  @ViewChild('fileUpload') fileUploadRef: ElementRef<HTMLInputElement>
+  @ViewChild('fileUpload') fileUploadRef: ElementRef<HTMLInputElement>;
 
   ngOnDestroy(): void {
     this.destroy$.next(true);
@@ -43,8 +52,9 @@ export class HomePageComponent implements OnDestroy {
     this.renderer2.selectRootElement(this.fileUploadRef.nativeElement).click();
   }
 
-  public onFileSelected(event: Event) {
-    const file: File | undefined = (event.target as HTMLInputElement).files?.[0];
+  public onFileSelected(event: Event): void {
+    const file: File | undefined = (event.target as HTMLInputElement)
+      .files?.[0];
 
     if (!file) return;
 
@@ -64,13 +74,21 @@ export class HomePageComponent implements OnDestroy {
       const videoDuration = videoElement.duration;
 
       if (videoWidth > 1024 || videoHeight > 768) {
-        this.renderer2.setProperty(this.fileUploadRef.nativeElement, 'value', '');
+        this.renderer2.setProperty(
+          this.fileUploadRef.nativeElement,
+          'value',
+          ''
+        );
         this.errorMessage = 'Video dimensions exceed 1024x768.';
         return;
       }
 
       if (videoDuration > 10) {
-        this.renderer2.setProperty(this.fileUploadRef.nativeElement, 'value', '');
+        this.renderer2.setProperty(
+          this.fileUploadRef.nativeElement,
+          'value',
+          ''
+        );
         this.errorMessage = 'Video duration exceeds 10 seconds.';
         return;
       }
@@ -89,19 +107,23 @@ export class HomePageComponent implements OnDestroy {
 
     if (!this.file) {
       this.errorMessage = 'Please choose a file';
+      this.loading = false;
       return;
     }
 
-    this.gifService.convertVideoToGIF(this.file)
-      .pipe(takeUntil(this.destroy$))
+    this.gifService
+      .convertVideoToGIF(this.file)
+      .pipe(
+        finalize(() => (this.loading = false)),
+        takeUntil(this.destroy$)
+      )
       .subscribe({
-        next: response => {
+        next: (response) => {
           const jobId = response.jobId;
           localStorage.setItem('jobId', jobId);
           this.checkJobStatus(jobId);
         },
-        error: () => this.errorMessage = 'Error converting video to GIF.',
-        complete: () => this.loading = false
+        error: () => (this.errorMessage = 'Error converting video to GIF.'),
       });
   }
 
@@ -113,10 +135,9 @@ export class HomePageComponent implements OnDestroy {
       }
 
       this.gifService.getJobStatus(jobId).subscribe({
-        next: (status) => {
+        next: async (status) => {
           if (status.status === 'completed') {
-            this.gifUrl = status.outputPath;
-
+            this.gif$ = this.gifService.getGif(jobId);
             localStorage.removeItem('jobId');
             return;
           } else {
@@ -136,5 +157,38 @@ export class HomePageComponent implements OnDestroy {
 
   public trackButton(_: number, button: IButton): string {
     return button.text;
+  }
+
+  public downloadGif(gifUrl: string): void {
+    const blob: Blob = this.base64ToBlob(gifUrl, 'image/gif');
+    const url: string = URL.createObjectURL(blob);
+
+    const a = this.renderer2.createElement('a');
+    this.renderer2.setAttribute(a, 'href', url);
+    this.renderer2.setAttribute(a, 'download', 'downloaded.gif');
+
+    this.renderer2.appendChild(document.body, a);
+
+    a.click();
+
+    this.renderer2.removeChild(document.body, a);
+
+    URL.revokeObjectURL(url);
+  }
+
+  public base64ToBlob(base64: string, type: string): Blob {
+    const byteCharacters: string = atob(base64);
+    const byteArray = new Uint8Array(byteCharacters.length);
+
+    for (let i: number = 0; i < byteCharacters.length; i++) {
+      byteArray[i] = byteCharacters.charCodeAt(i);
+    }
+
+    return new Blob([byteArray], { type });
+  }
+
+  public removeFile(): void {
+    this.file = undefined;
+    this.renderer2.setProperty(this.fileUploadRef.nativeElement, 'value', '');
   }
 }

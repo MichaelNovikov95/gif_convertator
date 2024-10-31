@@ -1,4 +1,16 @@
-<div class="gif-container" id="gifContainer">
-  <img *ngIf="gifUrl" [src]="gifUrl" alt="GIF">
-  <p *ngIf="!gifUrl">Here would be your GIF...</p>
+<div class="gif-wrapper">
+  <div class="gif-container" id="gifContainer">
+    <img
+      *ngIf="gif"
+      [src]="'data:image/gif;base64,' + gif.gifBase64"
+      alt="GIF"
+    />
+    <p *ngIf="!gif">Here would be your GIF...</p>
+  </div>
+
+  <app-button
+    [class.button-wrapper]="!gif"
+    [text]="'Download'"
+    (click)="onDownloadGif()"
+  />
 </div>

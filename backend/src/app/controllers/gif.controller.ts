@@ -1,34 +1,35 @@
 import { Request, Response } from "express";
 import fs from "fs";
-import { redisConnection } from "../utils/redis";
+import { Queue } from "bullmq";
 
-export const getGif = async (req: Request, res: Response) => {
-  const jobId = req.params.id;
+export const getGif = (videoQueue: Queue) => {
+  return async (req: Request, res: Response): Promise<void> => {
+    const jobId = req.params.id;
 
-  try {
-    const jobStatus = await redisConnection.get(jobId);
-    if (jobStatus) {
-      const { outputPath } = JSON.parse(jobStatus);
+    try {
+      const job = await videoQueue.getJob(jobId);
 
-      res.sendFile(outputPath, (err) => {
-        if (err) {
-          console.error("Error sending file:", err);
-          return res.status(500).send("Error sending file.");
+      if (!job) {
+        res.status(404).send("Job not found.");
+        return;
+      }
+
+      const outputPath = job.data.videoPath;
+      const gifBuffer = fs.readFileSync(outputPath);
+      const gifBase64 = gifBuffer.toString("base64");
+
+      res.status(200).json({ gifBase64 });
+
+      fs.unlink(outputPath, (unlinkErr) => {
+        if (unlinkErr) {
+          console.error("Error deleting file:", unlinkErr);
+        } else {
+          console.log(`Deleted GIF file: ${outputPath}`);
         }
-
-        fs.unlink(outputPath, (unlinkErr) => {
-          if (unlinkErr) {
-            console.error("Error deleting file:", unlinkErr);
-          } else {
-            console.log(`Deleted GIF file: ${outputPath}`);
-          }
-        });
       });
-    } else {
-      res.status(404).send("Job not found.");
+    } catch (error: any) {
+      console.error("Error retrieving job status:", error);
+      res.status(500).send(error.message);
     }
-  } catch (error) {
-    console.error("Error retrieving job status:", error);
-    res.status(500).send("Error retrieving job status.");
-  }
+  };
 };

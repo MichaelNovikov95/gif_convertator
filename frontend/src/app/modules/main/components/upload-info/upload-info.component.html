@@ -1,6 +1,7 @@
 <div class="upload-info">
   <p *ngIf="fileName" class="upload-file-name">
     <span>{{ fileName }}</span>
+    <button (click)="removeFile()" class="upload-remove">✖</button>
   </p>
 
   <p *ngIf="errorMessage" class="upload-error-message">
