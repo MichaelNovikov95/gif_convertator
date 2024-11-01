@@ -21,11 +21,11 @@ export const getGif = (videoQueue: Queue) => {
       res.status(200).json({ gifBase64 });
 
       fs.unlink(outputPath, (unlinkErr) => {
-        if (unlinkErr) {
-          console.error("Error deleting file:", unlinkErr);
-        } else {
+        if (!unlinkErr) {
           console.log(`Deleted GIF file: ${outputPath}`);
+          return;
         }
+        console.error("Error deleting file:", unlinkErr);
       });
     } catch (error: any) {
       console.error("Error retrieving job status:", error);

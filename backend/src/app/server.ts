@@ -13,7 +13,7 @@ const videoQueue = new Queue("videoQueue", { connection: redisConnection });
 app.use(cors());
 app.use(express.json());
 app.get("/", (req, res) => {
-  res.send("<h1>Henlo</h1>");
+  res.send("<h1>Server is responding.</h1>");
 });
 app.use("/api/videos", videoRoutes(videoQueue));
 

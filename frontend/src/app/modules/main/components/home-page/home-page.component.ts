@@ -136,13 +136,12 @@ export class HomePageComponent implements OnDestroy {
 
       this.gifService.getJobStatus(jobId).subscribe({
         next: async (status) => {
-          if (status.status === 'completed') {
-            this.gif$ = this.gifService.getGif(jobId);
-            localStorage.removeItem('jobId');
-            return;
-          } else {
+          if (status.status !== 'completed') {
             console.log('Job still processing...');
+            return;
           }
+          this.gif$ = this.gifService.getGif(jobId);
+          localStorage.removeItem('jobId');
         },
         error: () => {
           console.error('Error checking job status.');

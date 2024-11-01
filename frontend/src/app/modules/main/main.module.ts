@@ -1,12 +1,12 @@
 import { NgModule } from '@angular/core';
 import { NgForOf, NgIf } from '@angular/common';
-import { RouterModule } from "@angular/router";
-import { MainComponent } from "./main.component";
-import { routes } from "./main.routes";
+import { RouterModule } from '@angular/router';
 
-import { ButtonComponent } from "../../shared/components/button/button.component";
-import { GifContainerComponent } from "./components/gif-container/gif-container.component";
-import { UploadInfoComponent } from "./components/upload-info/upload-info.component";
+import { ButtonComponent } from '../../shared/components/button/button.component';
+import { GifContainerComponent } from './components/gif-container/gif-container.component';
+import { UploadInfoComponent } from './components/upload-info/upload-info.component';
+import { MainComponent } from './main.component';
+import { routes } from './main.routes';
 
 @NgModule({
   declarations: [MainComponent],
@@ -16,7 +16,7 @@ import { UploadInfoComponent } from "./components/upload-info/upload-info.compon
     ButtonComponent,
     NgForOf,
     GifContainerComponent,
-    UploadInfoComponent
-  ]
+    UploadInfoComponent,
+  ],
 })
-export class MainModule { }
+export class MainModule {}

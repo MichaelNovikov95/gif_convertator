@@ -71,7 +71,7 @@ cd cypress
 2. **Install dependencies:**
 
 ```bash
-npm i
+npm install
 ```
 
 3. **Run the Cypress tests:**
